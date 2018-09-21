@@ -15,6 +15,8 @@ import seaborn as sns
 import pickle as cPickle
 import random, sys, keras
 from scipy import fftpack
+import datetime
+time=str(datetime.datetime.now())
 
 
 def dost_bw(l):
@@ -48,7 +50,7 @@ def dost(inp):
     #plt.plot(np.abs(dost_inp[0,:]))
     return dost_inp
 
-Xd = cPickle.load(open('/dataset/master_dataset.dat','rb'))
+Xd = cPickle.load(open('/dataset/master_dataset_'+time'.dat','rb'))
 new_Xd={}
 for keys in Xd.keys():
     if keys[1]>=-8 and keys[1]<=8:
@@ -123,7 +125,7 @@ batch_size = 512  # training batch size
 
 print('----------------------Model Set Beginning Training----------------------')
 
-filepath = '/trained_weights/Model_wts_90_dost1.h5'
+filepath = '/trained_weights/Model_wts_90_dost1_'+time+'.h5'
 history = model.fit(X_train,
     Y_train,
     batch_size=batch_size,
@@ -139,16 +141,6 @@ history = model.fit(X_train,
 
 print("Successfully trained")
 
-def plot_confusion_matrix(cm, title='Confusion matrix', cmap=plt.cm.Blues, labels=[]):
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(labels))
-    plt.xticks(tick_marks, labels, rotation=45)
-    plt.yticks(tick_marks, labels)
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
 test_Y_hat = model.predict(X_test, batch_size=batch_size)
 score = model.evaluate(X_test, Y_test, verbose=0, batch_size=batch_size)
 print(score)
@@ -157,6 +149,7 @@ print('--------------------------saving confusion matrix---------------------')
 
 classes=mods
 l=len(snrs)
+conf_all = {}
 snrs1=np.unique(np.array(lbl)[:,1])
 conf = np.zeros([len(classes),len(classes)])
 confnorm = np.zeros([len(classes),len(classes)])
@@ -169,10 +162,11 @@ for i in range(0,len(classes)):
 cor = np.sum(np.diag(conf))
 ncor = np.sum(conf) - cor
 overall_acc = 1.0*cor/(cor+ncor)
+conf_all['all']=conf
 print(np.sum(conf))
 print("Overall Accuracy: ", overall_acc)
-plot_confusion_matrix(confnorm, labels=classes)
-plt.savefig('/results/OVERALL_Confusion_Matrix_Model_C_90classes_DOST.jpg',dpi=300,transparent=True)
+#plot_confusion_matrix(confnorm, labels=classes)
+#plt.savefig('OVERALL_Confusion_Matrix_Model_C_90classes_DOST.jpg',dpi=300,transparent=True)
 
 print('--------------------------saving confusion matrix with SNRs---------------------')
 acc = {}
@@ -190,16 +184,13 @@ for t in range(0,len(snrs)):
     cor = np.sum(np.diag(conf))
     ncor = np.sum(conf) - cor
     acc[int(snrs[t])] = 1.0*cor/(cor+ncor)
+    conf_all[-(snrs[t])]=conf
     #print(np.sum(conf))
-    plt.figure()
-    plot_confusion_matrix(confnorm, labels=classes, title="ConvNet Confusion Matrix (SNR=%d)"%(int(snrs[t])))
-    name="/results/OVERALL_Confusion_Matrix_Model_C_90classes_DOST_SNR_"+str(snrs[t])+"_Acc_"+str(acc[int(snrs[t])])+".jpg"
-    plt.savefig(name,dpi=300,transparent=True)
+    #plt.figure()
+    #plot_confusion_matrix(confnorm, labels=classes, title="ConvNet Confusion Matrix (SNR=%d)"%(int(snrs[t])))
+    #plt.savefig(name,dpi=300,transparent=True)
 for i in snrs:
     print("Overall Accuracy for SNR=",i," ",acc[i])
-
+cPickle.dump(conf_all,open('/results/Confusion matrix_'+time+'.dat','wb'))
 
 print('--------------------------Program Successfully terminated------------------------')
-
-
-
