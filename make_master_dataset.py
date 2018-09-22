@@ -6,5 +6,4 @@ Xc= pickle.load(open('dataset/2016.04C.multisnr.pkl','rb'), encoding='latin')
 new_Xd={}
 for keys in Xd.keys():
         new_Xd[keys] = np.concatenate((Xd[keys],Xa[keys],Xc[keys]),axis=0)
-
 pickle.dump(new_Xd,open('dataset/master_dataset.dat','wb'))
