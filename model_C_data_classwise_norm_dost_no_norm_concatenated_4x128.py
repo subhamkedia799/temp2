@@ -63,20 +63,20 @@ count=0
 for mod in mods:
     for snr in snrs:
         X2=new_Xd[(mod,snr)]
+        X1=np.transpose(X2)
+        X1=dost(X1)
+        X1=np.absolute(X1)
+        X1=np.transpose(X1)
         X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-        X.append(X2)
+        X.append(np.concatenate((X2,X1),axis=1))
         #print(new_Xd[(mod,snr)].shape)
         for i in range(new_Xd[(mod,snr)].shape[0]):
             lbl.append((mod,snr))
             Y.append(count)
         count+=1
 X = np.vstack(X)
-X1=np.transpose(X)
-X1=dost(X1)
-X1=np.absolute(X1)
-X1=np.transpose(X1)
+
 #X = (X-np.mean(X,axis=2,keepdims=True))/np.std(X,axis=2,keepdims=True)
-X=np.concatenate((X,X1),axis=1)
 del new_Xd,X1,X2
 print(X.shape)
 
