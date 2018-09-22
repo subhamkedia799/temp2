@@ -137,7 +137,7 @@ history = model.fit(X_train,
     validation_data=(X_val, Y_val),
     callbacks = [
         keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
-        keras.callbacks.EarlyStopping(monitor='val_loss', patience=15, verbose=0, mode='auto')
+        keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='auto')
     ])
 # we re-load the best weights once training is finished
 model.load_weights(filepath)
