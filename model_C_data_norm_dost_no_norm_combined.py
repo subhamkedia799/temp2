@@ -69,12 +69,11 @@ for mod in mods:
             Y.append(count)
         count+=1
 X = np.vstack(X)
-2,keepdims=True)
 X1=np.transpose(X)
 X1=dost(X1)
 X1=np.absolute(X1)
 X1=np.transpose(X1)
-X = (X-np.mean(X,axis=2,keepdims=True))/np.std(X,axis=
+X = (X-np.mean(X,axis=2,keepdims=True))/np.std(X,axis=2,keepdims=True)
 X=np.concatenate((X,X1),axis=1)
 del new_Xd,X1
 print(X.shape)
