@@ -23,3 +23,5 @@ for ind in range(0,Xd['X'].shape[0]):
   snr=Xd['Z'][ind]
   Xd[(mods[mod_index],snr)].append(list(np.transpose(DATASET['X'][ind])))
   
+del DATASET
+print(Xd.keys())
