@@ -24,4 +24,4 @@ for ind in range(0,Xd['X'].shape[0]):
   Xd[(mods[mod_index],snr)].append(list(np.transpose(DATASET['X'][ind])))
   
 del DATASET
-print(Xd.keys())
+print(list(Xd.keys()))
