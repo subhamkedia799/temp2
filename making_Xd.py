@@ -7,7 +7,7 @@ mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK',
 snr_range=[-20,20]
 snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
 
-file_name = 'GOLD_XYZ_OSC.0001_1024.hdf5'
+file_name = 'dataset/2018.01/GOLD_XYZ_OSC.0001_1024.hdf5'
 DATASET = h5py.File(file_name, 'r')
 
 DATASET['X']=np.array(DATASET['X'])
