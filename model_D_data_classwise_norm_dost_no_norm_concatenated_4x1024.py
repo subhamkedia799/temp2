@@ -57,27 +57,35 @@ def dost(inp):
 #        new_Xd[keys] = Xd[keys]
 #del Xd
 #snrs,mods = map(lambda j: sorted(list(set(map(lambda x: x[j], new_Xd.keys())))), [1,0])
+
 mods = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
-snr_range=[-20,20,2]
-snrs=list(range(snr_range[0],snr_range[1]+1,snr_range[2]))
+mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
+#'CPFSK' is replaced by 'OOK' and 'PAM4' by '4ASK'
+snr_range=[-20,20]
+snrs=list(range(snr_range[0],snr_range[1]+1,2))
 
 file_name = 'GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
 
+Xd['X']=np.array(Xd['X'])
 X = []  
 Y = []
-lbl_temp=[]
-lbl= []
+lbl= np.zeros((Xd['X'].shape[0],(len(snrs)*len(mods_filt))),dtype=int)
 count=0
 
-for ind in range(0,shape(Xd['X'][0])):
-    lbl_temp.append((Xd['Y'][ind],Xd['Z'][ind]))
+for ind in range(0,Xd['X'].shape[0]):
+    mod_index=np.argmax(np.array(Xd['Y'][ind]))
+    snr_index=np.where(snrs == Xd['Z'][ind])
+    mod_snr_index=len(snrs)*mod_index+snr_index
+    lbl[ind][mod_snr_index]=1
+        
     X2=np.transpose(Xd['X'][ind])
     X1=np.transpose(X2)
     X1=dost(X1)   
     X1=np.absolute(X1)
     X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
     X.append(np.concatenate((X2,X1),axis=1))
+    Y.append(count)
     count+=1
 X = np.vstack(X)
 
@@ -124,15 +132,15 @@ classes = Y_train.shape[1]
 dr = 0.5 # dropout rate (%)
 model = models.Sequential()
 model.add(Reshape((in_shp+[1]), input_shape=in_shp))
-model.add(Conv2D(256, (4, 5), activation='relu', name='conv1', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(512, (4, 5), activation='relu', name='conv1', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 4), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(128, (4, 5), activation='relu', name='conv2', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 5), activation='relu', name='conv2', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 4), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(128, (4, 5), activation='relu', name='conv3', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 5), activation='relu', name='conv3', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
-model.add(Conv2D(128, (4, 5), activation='relu', name='conv4', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 5), activation='relu', name='conv4', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(Conv2D(128, (4, 7), activation='relu', name='conv5', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
