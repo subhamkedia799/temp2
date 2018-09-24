@@ -15,6 +15,7 @@ import pickle as cPickle
 import random, sys, keras
 from scipy import fftpack
 import datetime
+import h5py
 time=str(datetime.datetime.now())
 
 
@@ -57,33 +58,46 @@ def dost(inp):
 #del Xd
 #snrs,mods = map(lambda j: sorted(list(set(map(lambda x: x[j], new_Xd.keys())))), [1,0])
 mods = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
+snr_range=[-20,20,2]
+snrs=list(range(snr_range[0],snr_range[1]+1,snr_range[2]))
 
-
-import h5py
-filename = 'GOLD_XYZ_OSC.0001_1024.hdf5'
-Xd = h5py.File(filename, 'r')
+file_name = 'GOLD_XYZ_OSC.0001_1024.hdf5'
+Xd = h5py.File(file_name, 'r')
 
 X = []  
 Y = []
+lbl_temp=[]
 lbl= []
 count=0
-for mod in mods:
-    for snr in snrs:
-        X2=new_Xd[(mod,snr)]
-        X1=np.transpose(X2)
-        X1=dost(X1)
-        X1=np.absolute(X1)
-        X1=np.transpose(X1)
-        X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-        X.append(np.concatenate((X2,X1),axis=1))
-        #print(new_Xd[(mod,snr)].shape)
-        for i in range(new_Xd[(mod,snr)].shape[0]):
-            lbl.append((mod,snr))
-            Y.append(count)
-        count+=1
+
+for ind in range(0,shape(Xd['X'][0])):
+    lbl_temp.append((Xd['Y'][ind],Xd['Z'][ind]))
+    X2=np.transpose(Xd['X'][ind])
+    X1=np.transpose(X2)
+    X1=dost(X1)   
+    X1=np.absolute(X1)
+    X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
+    X.append(np.concatenate((X2,X1),axis=1))
+    count+=1
 X = np.vstack(X)
 
-#X = (X-np.mean(X,axis=2,keepdims=True))/np.std(X,axis=2,keepdims=True)
+
+#for mod in mods:
+#    for snr in snrs:
+#        X2=new_Xd[(mod,snr)]
+#        X1=np.transpose(X2)
+#        X1=dost(X1)
+#        X1=np.absolute(X1)
+#        X1=np.transpose(X1)
+#        X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
+#        X.append(np.concatenate((X2,X1),axis=1))
+        
+#         for i in range(new_Xd[(mod,snr)].shape[0]):
+#            lbl.append((mod,snr))
+#            Y.append(count)
+#        count+=1
+#X = np.vstack(X)
+
 del new_Xd,X1,X2
 print(X.shape)
 
