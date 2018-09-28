@@ -146,7 +146,7 @@ model.compile(loss='categorical_crossentropy', optimizer='adam', metrics=['accur
 model.summary()
 
 nb_epoch = 200     # number of epochs to train on
-batch_size = 1024  # training batch size
+batch_size = 128  # training batch size
 
 print('----------------------Model Set Beginning Training----------------------')
 
