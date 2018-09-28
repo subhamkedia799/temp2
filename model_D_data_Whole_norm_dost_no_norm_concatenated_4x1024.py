@@ -150,7 +150,7 @@ batch_size = 1024  # training batch size
 
 print('----------------------Model Set Beginning Training----------------------')
 
-filepath = 'trained_weights/Model_wts_90_data_norm_dost.h5'
+filepath = 'trained_weights/Model_D_wts_data_norm_dost_no_norm.h5'
 
 history = model.fit(X_train,
     Y_train,
