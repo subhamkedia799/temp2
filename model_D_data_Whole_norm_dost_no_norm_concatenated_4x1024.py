@@ -78,6 +78,7 @@ lbl=[]
 for ind in range(0, data.shape[0]):
     mod_index = np.argmax(mod_label[ind])
     mod = mods_total[mod_index]
+    print(mod)
     snr = snr_label[ind]
     snr_index = snrs.index(snr)
     lbl.append((mod,snr))
