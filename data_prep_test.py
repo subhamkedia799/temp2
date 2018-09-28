@@ -41,7 +41,7 @@ snr_range=[-8,8]
 snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
 mods=np.array(mods)
 
-file_name = 'dataset/GOLD_XYZ_OSC.0001_1024.hdf5'
+file_name = 'dataset/2018.01/GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
 
 X = []  
