@@ -1,6 +1,7 @@
 import h5py
 import numpy as np
 from scipy import fftpack
+from numpy import zeros, newaxis
 
 def dost_bw(l):
     out = np.zeros(int(2*np.log2(l)))
@@ -50,7 +51,7 @@ Y = []
 lbl=[]
 count=0
 
-for ind in range(0,len(Xd['X'][0])):
+for ind in range(0,len(Xd['X'])):
     mod=mods[np.argmax(np.array(Xd['Y'][ind]))]
     #snr_index=np.where(snrs == Xd['Z'][ind])
     #mod_snr_index=len(snrs)*mod_index+snr_index
