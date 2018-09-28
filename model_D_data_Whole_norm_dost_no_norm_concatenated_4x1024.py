@@ -51,11 +51,17 @@ def dost(inp):
     return dost_inp
 
 mods_total = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
-mods = ['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
+mods = ['8PSK','AM-DSB-WC','BPSK','16APSK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
 #'CPFSK' is replaced by 'OOK' and 'PAM4' by '4ASK'
 snr_range=[-8,8]
-snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
-mods=np.array(mods)
+snrs=list(range(snr_range[0],snr_range[1]+1,2))
+
+mod_map={}
+for i in range(0,len(mods)):
+    itemindex = mods_total.index(mods[i])
+    mod_map[itemindex] = i
+
+
 
 file_name = 'dataset/selected_data.hdf5'
 Xd = h5py.File(file_name, 'r')
@@ -67,14 +73,16 @@ snr_label=Xd['snr_label']
 X=[]
 Y=[]
 lbl=[]
-count=0
+
 
 for ind in range(0, data.shape[0]):
-    mod = mods_total[np.argmax(mod_label[ind])]
+    mod_index = np.argmax(mod_label[ind])
+    mod = mods_total[mod_index]
     snr = snr_label[ind]
+    snr_index = snrs.index(snr)
     lbl.append((mod,snr))
-    Y.append(count)
-    count+=1
+    Y.append(mod_map[mod_index]*len(snrs) + snr_index)
+    
     
 X = np.transpose(data, (0, 2, 1))
 del data, mod_label, snr_label
