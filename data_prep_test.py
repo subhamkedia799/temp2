@@ -11,7 +11,7 @@ mods_filt=np.array(mods_filt)
 
 file_name = 'dataset/2018.01/GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
-new_Xd={'X'=[],'Y'=[],'Z'=[]}
+new_Xd={'X':[],'Y':[],'Z':[]}
 
 for ind in range(0,len(Xd['X'])):
     mod=mods[np.argmax(np.array(Xd['Y'][ind]))]
