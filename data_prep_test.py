@@ -41,6 +41,7 @@ mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK',
 snr_range=[-8,8]
 snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
 mods=np.array(mods)
+mods_filt=np.array(mods_filt)
 
 file_name = 'dataset/2018.01/GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
@@ -70,7 +71,8 @@ for ind in range(0,len(Xd['X'])):
         lbl.append((mod,snr))
         Y.append(count)
         count+=1
+
 X = np.vstack(X)
 
-del Xd,X1,X2
+del Xd
 print(X.shape)
