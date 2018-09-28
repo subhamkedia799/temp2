@@ -1,5 +1,5 @@
 import h5py
-impport numpy as np
+import numpy as np
 from scipy import fftpack
 
 def dost_bw(l):
@@ -47,7 +47,24 @@ data=Xd['data']
 mod_label=Xd['mod_label']
 snr_label=Xd['snr_label']
 
+X=[]
+Y=[]
+lbl=[]
+count=0
+
 for ind in range(0, data.shape[0]):
+    mod = mods_total[np.argmax(mod_label[ind])]
+    snr = snr_label[ind]
+    lbl.append((mod,snr))
+    Y.append(count)
+    count+=1
+    
+X = np.vstack(data)
+print(X.shape)
+
+
+
+    
 
 
 
