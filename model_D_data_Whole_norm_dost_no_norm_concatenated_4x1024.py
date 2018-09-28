@@ -121,19 +121,19 @@ classes = Y_train.shape[1]
 dr = 0.5 # dropout rate (%)
 model = models.Sequential()
 model.add(Reshape((in_shp+[1]), input_shape=in_shp))
-model.add(Conv2D(512, (4, 5), activation='relu', name='conv1', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(512, (4, 10), activation='relu', name='conv1', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 4), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(256, (4, 5), activation='relu', name='conv2', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 10), activation='relu', name='conv2', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 4), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(256, (4, 5), activation='relu', name='conv3', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 10), activation='relu', name='conv3', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 2), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(256, (4, 5), activation='relu', name='conv4', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(256, (4, 10), activation='relu', name='conv4', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(AveragePooling2D(pool_size=(1, 2), strides=None, padding='valid', data_format=None))
-model.add(Conv2D(128, (4, 7), activation='relu', name='conv5', padding='same', kernel_initializer='glorot_uniform'))
+model.add(Conv2D(128, (4, 14), activation='relu', name='conv5', padding='same', kernel_initializer='glorot_uniform'))
 model.add(Dropout(dr))
 model.add(Flatten())
 model.add(Dense(256, activation='relu', name='dense1', kernel_initializer='he_normal'))
@@ -161,7 +161,7 @@ history = model.fit(X_train,
     validation_data=(X_val, Y_val),
     callbacks = [
         keras.callbacks.ModelCheckpoint(filepath, monitor='val_loss', verbose=0, save_best_only=True, mode='auto'),
-        keras.callbacks.EarlyStopping(monitor='val_loss', patience=5, verbose=0, mode='auto')
+        keras.callbacks.EarlyStopping(monitor='val_loss', patience=15, verbose=0, mode='auto')
     ])
 # we re-load the best weights once training is finished
 model.load_weights(filepath)
@@ -177,7 +177,7 @@ print('--------------------------saving confusion matrix---------------------')
 classes=mods
 l=len(snrs)
 conf_all = {}
-snrs1=np.unique(np.array(lbl)[:,1])
+#snrs1=np.unique(np.array(lbl)[:,1])
 conf = np.zeros([len(classes),len(classes)])
 confnorm = np.zeros([len(classes),len(classes)])
 for i in range(0,X_test.shape[0]):
