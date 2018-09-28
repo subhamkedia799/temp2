@@ -53,7 +53,7 @@ def dost(inp):
 mods = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
 mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
 #'CPFSK' is replaced by 'OOK' and 'PAM4' by '4ASK'
-snr_range=[-20,20]
+snr_range=[-8,8]
 snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
 mods=np.array(mods)
 
@@ -73,7 +73,7 @@ for ind in range(0,len(Xd['X'][0])):
     #lbl[ind][mod_snr_index]=1
     snr=Xd['Z'][ind]
     
-    if mod in mods and snr in snrs:
+    if mod in mods_filt and snr in snrs:
         X2=np.array(Xd['X'][ind])
         X2=X2[:, :, newaxis]
         X1=dost(X2)
@@ -82,28 +82,12 @@ for ind in range(0,len(Xd['X'][0])):
         X2=np.transpose(X2)
         #X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
         X.append(np.concatenate((X2,X1),axis=1))
+        lbl.append((mod,snr))
         Y.append(count)
         count+=1
 X = np.vstack(X)
 
-
-#for mod in mods:
-#    for snr in snrs:
-#        X2=new_Xd[(mod,snr)]
-#        X1=np.transpose(X2)
-#        X1=dost(X1)
-#        X1=np.absolute(X1)
-#        X1=np.transpose(X1)
-#        X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-#        X.append(np.concatenate((X2,X1),axis=1))
-        
-#         for i in range(new_Xd[(mod,snr)].shape[0]):
-#            lbl.append((mod,snr))
-#            Y.append(count)
-#        count+=1
-#X = np.vstack(X)
-
-del new_Xd,X1,X2
+del Xd,X1,X2
 print(X.shape)
 
 print('----------------------Dataset Loaded----------------------')
