@@ -11,21 +11,35 @@ mods_filt=np.array(mods_filt)
 
 file_name = 'dataset/2018.01/GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
-new_Xd={'X':[],'Y':[],'Z':[]}
+
+data = []
+mod_label = []
+snr_label = []
 
 for ind in range(0,len(Xd['X'])):
     mod=mods[np.argmax(np.array(Xd['Y'][ind]))]
     snr=Xd['Z'][ind]
     
     if mod in mods_filt and snr in snrs:
-        new_Xd['X'].append(Xd['X'][ind])
-        new_Xd['Y'].append(Xd['Y'][ind])
-        new_Xd['Z'].append(Xd['Z'][ind])
+        data.append(Xd['X'][ind])
+        mod_label.append(Xd['Y'][ind])
+        snr_label.append(Xd['Z'][ind])
+        break
 
 del Xd
 
+
 data_file = h5py.File('dataset/selected_data.hdf5', 'w')
-data_file.create_dataset('my_dataset', data=new_Xd)
+data_file.create_dataset('data', data=np.array(data))
+data_file.create_dataset('mod_label', data=np.array(mod_label))
+data_file.create_dataset('snr_label', data=np.array(snr_label))
+
 data_file.close()
+
+filename='dataset/selected_data.hdf5'
+new_Xd = h5py.File(filename, 'r')
+print(new_Xd['data'][0])
+print(new_Xd['mod_label'][0])
+print(new_Xd['snr_label'][0])
 
 del new_Xd
