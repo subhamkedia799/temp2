@@ -50,43 +50,40 @@ def dost(inp):
     #plt.plot(np.abs(dost_inp[0,:]))
     return dost_inp
 
-#Xd = cPickle.load(open('dataset/master_dataset.dat','rb'))
-#new_Xd={}
-#for keys in Xd.keys():
-#    if keys[1]>=-8 and keys[1]<=8:
-#        new_Xd[keys] = Xd[keys]
-#del Xd
-#snrs,mods = map(lambda j: sorted(list(set(map(lambda x: x[j], new_Xd.keys())))), [1,0])
-
 mods = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
 mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
 #'CPFSK' is replaced by 'OOK' and 'PAM4' by '4ASK'
 snr_range=[-20,20]
-snrs=list(range(snr_range[0],snr_range[1]+1,2))
+snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
+mods=np.array(mods)
 
-file_name = 'GOLD_XYZ_OSC.0001_1024.hdf5'
+file_name = 'dataset/GOLD_XYZ_OSC.0001_1024.hdf5'
 Xd = h5py.File(file_name, 'r')
 
-Xd['X']=np.array(Xd['X'])
 X = []  
 Y = []
-lbl= np.zeros((Xd['X'].shape[0],(len(snrs)*len(mods_filt))),dtype=int)
+#lbl= np.zeros((Xd['X'].shape[0],(len(snrs)*len(mods_filt))),dtype=int)
+lbl=[]
 count=0
 
-for ind in range(0,Xd['X'].shape[0]):
-    mod_index=np.argmax(np.array(Xd['Y'][ind]))
-    snr_index=np.where(snrs == Xd['Z'][ind])
-    mod_snr_index=len(snrs)*mod_index+snr_index
-    lbl[ind][mod_snr_index]=1
-        
-    X2=np.transpose(Xd['X'][ind])
-    X1=np.transpose(X2)
-    X1=dost(X1)   
-    X1=np.absolute(X1)
-    X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-    X.append(np.concatenate((X2,X1),axis=1))
-    Y.append(count)
-    count+=1
+for ind in range(0,len(Xd['X'][0])):
+    mod=mods[np.argmax(np.array(Xd['Y'][ind]))]
+    #snr_index=np.where(snrs == Xd['Z'][ind])
+    #mod_snr_index=len(snrs)*mod_index+snr_index
+    #lbl[ind][mod_snr_index]=1
+    snr=Xd['Z'][ind]
+    
+    if mod in mods and snr in snrs:
+        X2=np.array(Xd['X'][ind])
+        X2=X2[:, :, newaxis]
+        X1=dost(X2)
+        X1=np.absolute(X1)
+        X1=np.transpose(X1)
+        X2=np.transpose(X2)
+        #X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
+        X.append(np.concatenate((X2,X1),axis=1))
+        Y.append(count)
+        count+=1
 X = np.vstack(X)
 
 
