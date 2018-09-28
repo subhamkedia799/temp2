@@ -1,7 +1,7 @@
 import h5py
 import numpy as np
 from scipy import fftpack
-from numpy import zeros, newaxis
+#from numpy import zeros, newaxis
 
 def dost_bw(l):
     out = np.zeros(int(2*np.log2(l)))
@@ -61,13 +61,12 @@ for ind in range(0,len(Xd['X'])):
     
     if mod in mods_filt and snr in snrs:
         X2=np.array(Xd['X'][ind])
-        X2=X2[:, :, newaxis]
         X1=dost(X2)
         X1=np.absolute(X1)
         X1=np.transpose(X1)
         X2=np.transpose(X2)
         #X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-        X.append(np.concatenate((X2,X1),axis=1))
+        X.append(np.concatenate((X2,X1),axis=0))
         lbl.append((mod,snr))
         Y.append(count)
         count+=1
