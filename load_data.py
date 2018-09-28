@@ -60,6 +60,8 @@ for ind in range(0, data.shape[0]):
     count+=1
     
 X = np.vstack(data)
+del data, mod_label, snr_label
+
 print(X.shape)
 
 
