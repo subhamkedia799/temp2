@@ -24,7 +24,6 @@ for ind in range(0,len(Xd['X'])):
         data.append(Xd['X'][ind])
         mod_label.append(Xd['Y'][ind])
         snr_label.append(Xd['Z'][ind])
-        break
 
 del Xd
 
@@ -35,11 +34,5 @@ data_file.create_dataset('mod_label', data=np.array(mod_label))
 data_file.create_dataset('snr_label', data=np.array(snr_label))
 
 data_file.close()
-
-filename='dataset/selected_data.hdf5'
-new_Xd = h5py.File(filename, 'r')
-print(new_Xd['data'][0])
-print(new_Xd['mod_label'][0])
-print(new_Xd['snr_label'][0])
 
 del new_Xd
