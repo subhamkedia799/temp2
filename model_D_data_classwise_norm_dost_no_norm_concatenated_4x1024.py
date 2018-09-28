@@ -15,8 +15,8 @@ import pickle as cPickle
 import random, sys, keras
 from scipy import fftpack
 import datetime
-import h5py
 time=str(datetime.datetime.now())
+import h5py
 
 
 def dost_bw(l):
@@ -50,45 +50,45 @@ def dost(inp):
     #plt.plot(np.abs(dost_inp[0,:]))
     return dost_inp
 
-mods = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
-mods_filt=['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
+mods_total = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
+mods = ['8PSK','AM-DSB-WC','BPSK','OOK','GMSK','4ASK','16QAM','64QAM','QPSK','FM']
 #'CPFSK' is replaced by 'OOK' and 'PAM4' by '4ASK'
 snr_range=[-8,8]
 snrs=np.array(range(snr_range[0],snr_range[1]+1,2))
 mods=np.array(mods)
 
-file_name = 'dataset/GOLD_XYZ_OSC.0001_1024.hdf5'
+file_name = 'dataset/selected_data.hdf5'
 Xd = h5py.File(file_name, 'r')
 
-X = []  
-Y = []
-#lbl= np.zeros((Xd['X'].shape[0],(len(snrs)*len(mods_filt))),dtype=int)
+data=Xd['data']
+mod_label=Xd['mod_label']
+snr_label=Xd['snr_label']
+
+X=[]
+Y=[]
 lbl=[]
 count=0
 
-for ind in range(0,len(Xd['X'][0])):
-    mod=mods[np.argmax(np.array(Xd['Y'][ind]))]
-    #snr_index=np.where(snrs == Xd['Z'][ind])
-    #mod_snr_index=len(snrs)*mod_index+snr_index
-    #lbl[ind][mod_snr_index]=1
-    snr=Xd['Z'][ind]
+for ind in range(0, data.shape[0]):
+    mod = mods_total[np.argmax(mod_label[ind])]
+    snr = snr_label[ind]
+    lbl.append((mod,snr))
+    Y.append(count)
+    count+=1
     
-    if mod in mods_filt and snr in snrs:
-        X2=np.array(Xd['X'][ind])
-        X2=X2[:, :, newaxis]
-        X1=dost(X2)
-        X1=np.absolute(X1)
-        X1=np.transpose(X1)
-        X2=np.transpose(X2)
-        #X2 = (X2-np.mean(X2,axis=2,keepdims=True))/np.std(X2,axis=2,keepdims=True)
-        X.append(np.concatenate((X2,X1),axis=1))
-        lbl.append((mod,snr))
-        Y.append(count)
-        count+=1
-X = np.vstack(X)
+X = np.transpose(data, (0, 2, 1))
+del data, mod_label, snr_label
 
-del Xd,X1,X2
+X1=np.transpose(X)
+X1=dost(X1)
+X1=np.absolute(X1)
+X1=np.transpose(X1)
+X = (X-np.mean(X,axis=2,keepdims=True))/np.std(X,axis=2,keepdims=True)
+X=np.concatenate((X,X1),axis=1)
+
+del X1
 print(X.shape)
+
 
 print('----------------------Dataset Loaded----------------------')
 X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size=0.15, random_state=42,stratify=Y)
