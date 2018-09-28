@@ -34,5 +34,3 @@ data_file.create_dataset('mod_label', data=np.array(mod_label))
 data_file.create_dataset('snr_label', data=np.array(snr_label))
 
 data_file.close()
-
-del new_Xd
