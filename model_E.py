@@ -51,10 +51,9 @@ def dost(inp):
     return dost_inp
 
 mods_total = ['32PSK','16APSK','32QAM','FM','GMSK','32APSK','OQPSK','8ASK','BPSK','8PSK','AM-SSB-SC','4ASK','16PSK','64APSK','128QAM','128APSK','AM-DSB-SC','AM-SSB-WC','64QAM','QPSK','256QAM','AM-DSB-WC','OOK','16QAM']
-mods = ['8PSK','AM-DSB-WC','BPSK','16APSK','64APSK','GMSK','16QAM','64QAM','QPSK','FM']
-#mods =['BPSK','QPSK','8PSK','GMSK','16APSK','64APSK','16QAM','64QAM','256QAM','AM-DSB-WC','AM-SSB-WC','FM']
+mods = ['BPSK','QPSK','8PSK','GMSK','16APSK','64APSK','16QAM','64QAM','AM-DSB-WC','FM']
 
-#snr_range=[-10,10]
+
 snr_range=[-8,8]
 snrs=list(range(snr_range[0],snr_range[1]+1,2))
 
@@ -64,7 +63,7 @@ for i in range(0,len(mods)):
     mod_map[itemindex] = i
 
 
-#file_name = 'dataset/RML2018_selected_larger_data.hdf5'
+
 file_name = 'dataset/RML2018_selected_data.hdf5'
 Xd = h5py.File(file_name, 'r')
 
@@ -178,7 +177,7 @@ print('--------------------------saving confusion matrix---------------------')
 classes=mods
 l=len(snrs)
 conf_all = {}
-#snrs1=np.unique(np.array(lbl)[:,1])
+
 conf = np.zeros([len(classes),len(classes)])
 confnorm = np.zeros([len(classes),len(classes)])
 for i in range(0,X_test.shape[0]):
